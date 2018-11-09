@@ -1,6 +1,6 @@
 # WordSearchJS
 A Javascript library to add Word Search Tasks to online and offline experiments. Adapted from Robert J. Calin-Jageman's
-(word search task)[https://calin-jageman.net/lab/word_search/], with added functionality to facilitate Qualtrics integration.
+[word search task](https://calin-jageman.net/lab/word_search/), with added functionality to facilitate Qualtrics integration.
 
 ## Using WordSearchJS in Qualtrics
 
