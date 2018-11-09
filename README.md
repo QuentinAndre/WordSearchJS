@@ -30,7 +30,7 @@ ws = new WordSearch({
         "grid": mygrid, // Your grid to search
         "words": mywords, // The list of words to find
         "parentId": "mysearchtask",
-        "onFindWord": () => console.log(ws.getScore()) // What to do when a word is found });
+        "onFindWord": function() {console.log("A word was found")} // What to do when a word is found });
 ```
 
 That's it! You have added a word search task to Qualtrics!
