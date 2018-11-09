@@ -16,7 +16,7 @@ A Javascript library to add Word Search Tasks to online and offline experiments.
 <div id="mysearchtask"></div>
 ```
 
-4. Edit the "Custom JS" of the question, and add the following Javascript code:
+4. Edit the "Custom JS" of the question, and add the following Javascript code in the `Qualtrics.SurveyEngine.addOnReady` section:
 ```
 var mygrid = [
     ['.', '.', '.', '.', '.', '.'],
@@ -30,7 +30,8 @@ ws = new WordSearch({
         "grid": mygrid, // Your grid to search
         "words": mywords, // The list of words to find
         "parentId": "mysearchtask",
-        "onFindWord": function() {console.log("A word was found")} // What to do when a word is found });
+        "onFindWord": function() {console.log("A word was found")} // What to do when a word is found 
+    });
 ```
 
 That's it! You have added a word search task to Qualtrics!
