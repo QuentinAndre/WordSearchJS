@@ -23,16 +23,6 @@ function wordsToUpperCase(words) {
     return words;
 }
 
-function guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-
-    return s4() + s4() + s4();
-}
-
 class WordSearch {
     constructor(o) {
         let obj = o ? o : {};
@@ -238,14 +228,13 @@ class WordSearch {
             wordSelected += selected[i].letter;
         }
         var wordSelectedR = wordSelected.split('').reverse().join('');
-
         var indexOfWord = this.words.indexOf(wordSelected);
         var indexOfWordR = this.words.indexOf(wordSelectedR);
 
         if (indexOfWord > -1) {
             if (this.timeToFind[indexOfWord] === -1) {
                 this.timeToFind[indexOfWord] = this.timer.getElapsed();
-                var ele = this.parent.querySelector('#' + wordSelected);
+                let ele = this.parent.querySelector('#' + wordSelected);
                 ele.style.setProperty("text-decoration", "line-through");
                 ele.style.setProperty("color", "red");
                 ele.setAttribute("text-decoration", "line-through");
@@ -256,7 +245,7 @@ class WordSearch {
         if (indexOfWordR > -1) {
             if (this.timeToFind[indexOfWordR] === -1) {
                 this.timeToFind[indexOfWordR] = this.timer.getElapsed();
-                var ele = this.parent.querySelector('#' + wordSelectedR);
+                let ele = this.parent.querySelector('#' + wordSelectedR);
                 ele.style.setProperty("text-decoration", "line-through");
                 ele.style.setProperty("color", "red");
                 ele.setAttribute("text-decoration", "line-through");
