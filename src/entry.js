@@ -1,1 +1,1 @@
-module.exports = require('./wordsearch.js').default;
+module.exports = require('./wordsearch.ts').default;

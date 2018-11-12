@@ -1,6 +1,9 @@
 import "./wordsearch.css"
 
 class Chronometer {
+    elapsed: number;
+    timer: number;
+
     constructor() {
         this.elapsed = 0;
         this.timer = setInterval(() => this.tick(), 1000);
@@ -16,17 +19,41 @@ class Chronometer {
 
 }
 
-function wordsToUpperCase(words) {
+function wordsToUpperCase(words: Array<string>): Array<string> {
     for (var i = 0; i < words.length; i++) {
         words[i] = words[i].toUpperCase();
     }
     return words;
 }
 
+interface InitConfigObject {
+    grid: string[][]
+    words: string[]
+    onFindWord: Function
+    parentId: string
+}
+
+interface MatrixItem {
+    letter: string
+    row: number
+    col: number
+}
+
 class WordSearch {
-    constructor(o) {
-        let obj = o ? o : {};
-        this.grid = obj.grid ? obj.grid : [
+    grid: string[][];
+    words: string[];
+    onFindWord: Function;
+    parent: HTMLElement;
+    rowSize: number;
+    colSize: number;
+    timeToFind: number[];
+    timer: Chronometer;
+    matrix: MatrixItem[][];
+    selectFrom: MatrixItem;
+    selected: MatrixItem[];
+
+    constructor(o: InitConfigObject) {
+        this.grid = o.grid ? o.grid : [
             ['.', '.', '.', '.', '.', '.'],
             ['.', 'T', 'E', 'S', 'T', '.'],
             ['.', '.', '.', '.', '.', '.']
@@ -34,11 +61,12 @@ class WordSearch {
         this.rowSize = this.grid.length;
         this.colSize = this.grid[0].length;
 
-        this.words = obj.words ? wordsToUpperCase(obj.words) : ["TEST"];
+        this.words = o.hasOwnProperty("words") ? wordsToUpperCase(o.words) : ["TEST"];
 
-        this.onFindWord = obj.onFindWord ? obj.onFindWord.bind(this) : () => null;
+        // @ts-ignore
+        this.onFindWord = o.hasOwnProperty("onFindWord") ? o.onFindWord.bind(this) : () => null;
 
-        this.parent = obj.parentId ? document.getElementById(obj.parentId) : document.getElementById("ws-parent");
+        this.parent = o.parentId ? document.getElementById(o.parentId) : document.getElementById("ws-parent");
         this.parent.setAttribute("class", "wrap");
 
         this.timeToFind = new Array(this.words.length).fill(-1);
@@ -52,7 +80,7 @@ class WordSearch {
         var scoreArea = document.createElement("h2");
         var scoreLabel = document.createElement("div");
         scoreLabel.id = "ws-score";
-        scoreArea.append(scoreLabel);
+        scoreArea.appendChild(scoreLabel);
         this.parent.appendChild(scoreArea);
 
         var gridArea = document.createElement("section");
@@ -66,27 +94,35 @@ class WordSearch {
         this.parent.appendChild(wordsArea);
     }
 
-    getScore() {
-        return this.timeToFind.map(i => i > 0 ? 1 : 0).reduce((a, b) => a + b);
+    getScore(): number {
+        return this.timeToFind.map(function (i: number): number {
+            return (i > 0 ? 1 : 0)
+        }).reduce(function (a: number, b: number): number {
+            return a + b
+        });
     }
 
-    getRemaining() {
-        return this.timeToFind.map(i => i > 0 ? 0 : 1).reduce((a, b) => a + b);
+    getRemaining(): number {
+        return this.timeToFind.map(function (i: number): number {
+            return (i > 0 ? 0 : 1)
+        }).reduce(function (a: number, b: number): number {
+            return a + b
+        });
     }
 
-    getTiming() {
+    getTiming(): Array<number> {
         return this.timeToFind.slice();
     }
 
-    displayScore() {
+    displayScore(): void {
         this.parent.querySelector("#ws-score").innerHTML = "Found " + this.getScore() + " out of " + this.words.length + " words so far.";
     }
 
-    initMatrix() {
-        let matrix = [];
+    initMatrix(): MatrixItem[][] {
+        let matrix: MatrixItem[][] = [];
         for (var row = 0; row < this.rowSize; row++) {
             for (var col = 0; col < this.colSize; col++) {
-                var item = {
+                var item: MatrixItem = {
                     letter: this.grid[row][col], // Default value
                     row: row,
                     col: col
@@ -100,7 +136,7 @@ class WordSearch {
         return matrix;
     }
 
-    drawWordList(target) {
+    drawWordList(target: HTMLElement): void {
         var words = this.words;
         for (var i = 0; i < words.length; i++) {
             var liEl = document.createElement('li');
@@ -112,11 +148,11 @@ class WordSearch {
         }
     }
 
-    getItem(row, col) {
+    getItem(row: number, col: number): MatrixItem | undefined {
         return (this.matrix[row] ? this.matrix[row][col] : undefined);
     }
 
-    getItems(rowFrom, colFrom, rowTo, colTo) {
+    getItems(rowFrom: number, colFrom: number, rowTo: number, colTo: number): Array<MatrixItem> {
         var items = [];
 
         if (rowFrom === rowTo || colFrom === colTo || Math.abs(rowTo - rowFrom) === Math.abs(colTo - colFrom)) {
@@ -134,7 +170,7 @@ class WordSearch {
         return items;
     }
 
-    drawMatrix(target) {
+    drawMatrix(target: HTMLElement): void {
         var rowcount = this.rowSize;
         var columncount = this.colSize;
         for (var row = 0; row < rowcount; row++) {
@@ -146,8 +182,8 @@ class WordSearch {
                 var item = this.matrix[row][col];
                 var cvEl = document.createElement('canvas');
                 cvEl.setAttribute('class', 'ws-col');
-                cvEl.setAttribute('width', 25);
-                cvEl.setAttribute('height', 25);
+                cvEl.setAttribute('width', "25");
+                cvEl.setAttribute('height', "25");
 
                 // Fill text in middle center
                 var x = cvEl.width / 2,
@@ -169,9 +205,9 @@ class WordSearch {
         }
     }
 
-    handleMouseover(item) {
+    handleMouseover(item: MatrixItem): EventListener {
         var that = this;
-        return function () {
+        return function (): void {
             if (that.selectFrom) {
                 that.selected = that.getItems(that.selectFrom.row, that.selectFrom.col, item.row, item.col);
                 that.clearHighlight();
@@ -186,9 +222,9 @@ class WordSearch {
         }
     }
 
-    handleMouseup() {
+    handleMouseup(): EventListener {
         var that = this;
-        return function () {
+        return function (): void {
             that.selectFrom = null;
             that.clearHighlight();
             that.validateSelection(that.selected);
@@ -196,14 +232,14 @@ class WordSearch {
         }
     }
 
-    handleMousedown(item) {
+    handleMousedown(item: MatrixItem): EventListener {
         var that = this;
-        return function () {
+        return function (): void {
             that.selectFrom = item;
         }
     }
 
-    clearHighlight() {
+    clearHighlight(): void {
         var selectedEls = this.parent.querySelectorAll('.ws-selected');
         for (var i = 0; i < selectedEls.length; i++) {
             selectedEls[i].classList.remove('ws-selected');
@@ -211,7 +247,7 @@ class WordSearch {
     }
 
 
-    markAsFound(selected) {
+    markAsFound(selected: Array<MatrixItem>): void {
         for (var i = 0; i < selected.length; i++) {
             var row = selected[i].row + 1,
                 col = selected[i].col + 1,
@@ -222,7 +258,7 @@ class WordSearch {
         this.onFindWord();
     }
 
-    validateSelection(selected) {
+    validateSelection(selected: Array<MatrixItem>): void {
         var wordSelected = '';
         for (var i = 0; i < selected.length; i++) {
             wordSelected += selected[i].letter;
@@ -234,7 +270,7 @@ class WordSearch {
         if (indexOfWord > -1) {
             if (this.timeToFind[indexOfWord] === -1) {
                 this.timeToFind[indexOfWord] = this.timer.getElapsed();
-                let ele = this.parent.querySelector('#' + wordSelected);
+                let ele = this.parent.querySelector('#' + wordSelected) as HTMLElement;
                 ele.setAttribute("class", "ws-word-found");
                 this.markAsFound(selected);
             }
@@ -243,7 +279,7 @@ class WordSearch {
         if (indexOfWordR > -1) {
             if (this.timeToFind[indexOfWordR] === -1) {
                 this.timeToFind[indexOfWordR] = this.timer.getElapsed();
-                let ele = this.parent.querySelector('#' + wordSelectedR);
+                let ele = this.parent.querySelector('#' + wordSelectedR) as HTMLElement;
                 ele.setAttribute("class", "ws-word-found");
                 this.markAsFound(selected);
             }

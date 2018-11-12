@@ -22,7 +22,7 @@
 }
 
 .ws-found {
-    background: red
+    background: palegreen;
 }
 
 .wrap {
@@ -52,4 +52,11 @@
 .ws-word {
     margin-bottom: 4px;
     margin-right: 15px;
+}
+
+.ws-word-found {
+    margin-bottom: 4px;
+    margin-right: 15px;
+    text-decoration: line-through;
+    color: limegreen;
 }

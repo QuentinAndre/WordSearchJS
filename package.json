@@ -1,6 +1,6 @@
 {
   "name": "WordSearchJS",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A word search task for Qualtrics. Code adapted from Robert J. Calin-Jageman's task (https://calin-jageman.net/lab/word_search/)",
   "main": "index.js",
   "author": "Quentin André",
@@ -31,5 +31,9 @@
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4",
     "webpack-md5-hash": "^0.0.6"
+  },
+  "dependencies": {
+    "ts-loader": "^5.3.0",
+    "typescript": "^3.1.6"
   }
 }

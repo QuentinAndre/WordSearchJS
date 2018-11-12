@@ -37,7 +37,11 @@ module.exports = {
                     "style-loader",
                     "css-loader",
                 ],
-            }
+            },
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader"
+            },
         ]
     },
     plugins: [
